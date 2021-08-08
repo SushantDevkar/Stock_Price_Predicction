@@ -57,7 +57,7 @@ def insertintotable():
     #**************** FUNCTIONS TO FETCH DATA ***************************
     def get_historical(quote):
         end = datetime.now()
-        start = datetime(end.year-2,end.month,end.day)
+        start = datetime(end.year-5,end.month,end.day)
         data = yf.download(quote, start=start, end=end)
         df = pd.DataFrame(data=data)
         df.to_csv(''+quote+'.csv')
