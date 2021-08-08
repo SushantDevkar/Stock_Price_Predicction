@@ -1,5 +1,5 @@
-#To run this code 
-clone the repo.
+#To run this code ,
+clone the repo.,
 open command prompt
 1. Create new envirenment 
 * pip install virtualenv
