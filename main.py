@@ -143,12 +143,9 @@ def insertintotable():
 
     def LSTM_ALGO(df):
         #Split data into training set and test set
-        dataset_train=df.iloc[0:int(0.8*len(df)),:]
-        dataset_test=df.iloc[int(0.8*len(df)):,:]
+        dataset_train=df.iloc[0:int(0.65*len(df)),:]
+        dataset_test=df.iloc[int(0.65*len(df)):,:]
         ############# NOTE #################
-        #TO PREDICT STOCK PRICES OF NEXT N DAYS, STORE PREVIOUS N DAYS IN MEMORY WHILE TRAINING
-        # HERE N=7
-        ###dataset_train=pd.read_csv('Google_Stock_Price_Train.csv')
         training_set=df.iloc[:,4:5].values# 1:2, to store as numpy array else Series obj will be stored
         #select cols using above manner to select as float64 type, view in var explorer
 
@@ -162,8 +159,8 @@ def insertintotable():
         #7 timesteps meaning storing trends from 7 days before current day to predict 1 next output
         X_train=[]#memory with 7 days from day i
         y_train=[]#day i
-        for i in range(7,len(training_set_scaled)):
-            X_train.append(training_set_scaled[i-7:i,0])
+        for i in range(60,len(training_set_scaled)):
+            X_train.append(training_set_scaled[i-60:i,0])
             y_train.append(training_set_scaled[i,0])
         #Convert list to numpy arrays
         X_train=np.array(X_train)
@@ -222,7 +219,7 @@ def insertintotable():
         #To predict, we need stock prices of 7 days before the test set
         #So combine train and test set to get the entire data set
         dataset_total=pd.concat((dataset_train['Close'],dataset_test['Close']),axis=0) 
-        testing_set=dataset_total[ len(dataset_total) -len(dataset_test) -7: ].values
+        testing_set=dataset_total[ len(dataset_total) -len(dataset_test) -60: ].values
         testing_set=testing_set.reshape(-1,1)
         #-1=till last row, (-1,1)=>(80,1). otherwise only (80,0)
         
@@ -231,8 +228,8 @@ def insertintotable():
         
         #Create data structure
         X_test=[]
-        for i in range(7,len(testing_set)):
-            X_test.append(testing_set[i-7:i,0])
+        for i in range(60,len(testing_set)):
+            X_test.append(testing_set[i-60:i,0])
             #Convert list to numpy arrays
         X_test=np.array(X_test)
         
@@ -271,9 +268,6 @@ def insertintotable():
         return lstm_pred,error_lstm
     #***************** LINEAR REGRESSION SECTION ******************       
     def LIN_REG_ALGO(df):
-        #No of days to be forcasted in future
-        forecast_out = int(7)
-        #Price after n days
         df['Close after n days'] = df['Close'].shift(-forecast_out)
         #New df with only relevant data
         df_new=df[['Close','Close after n days']]
